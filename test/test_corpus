@@ -1,0 +1,24 @@
+3	A	B-NP	O
+1	B	B-VP	O
+3	A	B-NP	O
+1	B	B-NP	O
+
+2	B	B-NP	O
+3	A	B-AP	O
+2	A	B-AP	O
+1	A	B-PP	O
+
+2	A	B-VP	O
+1	A	B-PP	O
+2	B	B-NP	B-LOC
+3	A	B-VP	O
+
+1	B	B-NP	B-LOC
+2	B	O	O
+3	B	B-VP	O
+3	A	B-PP	O
+
+3	A	B-NP	O
+1	B	B-NP	O
+2	B	B-VP	O
+2	B	B-NP	O
