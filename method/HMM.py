@@ -1,9 +1,7 @@
-import sys
-
 import numpy as np
+from gensim.corpora import Dictionary
 
 from method import utils
-from gensim.corpora import Dictionary
 
 
 class HMMTagger:
@@ -19,16 +17,12 @@ class HMMTagger:
         HMMTagger.tag2idx = {tagset[i]: i for i in range(len(tagset))}
         HMMTagger.idx2tag = {i: tagset[i] for i in range(len(tagset))}
 
-        pass
-
     def fit(self, corpus):
         # TODO: smoothing
         clean_corpus = utils.clean_corpus(utils.load_train(corpus))
         A, B = utils.corpus_analyzer(clean_corpus, tagset=HMMTagger.tag_set)
         self.freq_obj = Freq(A, B)
         self.hmm_obj = HMM()
-        # print('INITIAL_DIST:\n', self.freq_obj.get_initial_distribution())
-        # print('TRANSITION_MATRIX:\n', self.freq_obj.get_transition_matrix())
 
     def postagging(self, word_seq):
         N = self.freq_obj.get_hidden_stage()
@@ -37,7 +31,6 @@ class HMMTagger:
         dct = Dictionary([word_seq])
         word2idx = dct.token2id
         id2word = {v: k for k, v in word2idx.items()}
-
         observed = np.array(dct.doc2idx(word_seq))
         emission_prob_matrix = np.zeros((N, T))
         for word in word2idx.keys():
@@ -83,7 +76,6 @@ class HMMTagger:
                 print()
                 for _ in range(len(word_seq)):
                     print('\t'.join([word_seq[_], tag_pred[_], tag_true[_]]))
-
         token_accuracy /= total_tag
         sent_accuracy /= total_sent
         return token_accuracy, sent_accuracy, cf_matrix
@@ -110,19 +102,13 @@ class HMM:
         # initialization step
         # using log scale trick if you don't want to get underflow errors
         viterbi_matrix[:, 0] = np.log(initial_distribution * b[:, observed[0]])
-
         for t in range(1, T):
             for stage in range(N):
                 probs = viterbi_matrix[:, t - 1] + np.log(a[:, stage]) + np.log(b[stage, observed[t]])
                 viterbi_matrix[stage, t] = np.max(probs)
                 back_pointer[stage, t] = np.argmax(probs)
-
         best_path = np.max(viterbi_matrix[:, T - 1])
         best_path_pointer = np.argmax(viterbi_matrix[:, T - 1])
-        # print(viterbi_matrix)
-        # print(back_pointer)
-        # print(best_path)
-
         S = np.zeros(T)
         S[0] = best_path_pointer
         i = 1
@@ -185,5 +171,3 @@ class Freq:
 
     def get_hidden_stage(self):
         return self.N
-
-
